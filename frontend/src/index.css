@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    @apply font-sans; /* Apply the Quicksand font globally */
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrollbars when Three.js renders */
+  }
+  
+  canvas {
+    display: block; /* Prevents the canvas from being an inline element */
+  }
