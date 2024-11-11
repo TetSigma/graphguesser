@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { supabase } from '../../supabaseClient';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -12,53 +11,55 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
     
-    if (error) {
-      setError(error.message);
-    } else {
-      setError('');
-      login();
+    try {
+      await login(email, password); 
       navigate('/');
+    } catch (error) {
+      setError('An error occurred while logging in. Please try again later.');
     }
   };
-
+  
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-spaceBlack">
-      <div className="p-6 rounded-lg shadow-lg w-96 bg-gradient-to-br from-blue-500/60 to-blue-500/60 backdrop-blur-lg border border-gray-500 z-10">
-        <h2 className="text-2xl font-bold text-white mb-4">Log In</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-gray-300">Email</label>
+      <div className="relative p-6 rounded-2xl shadow-lg w-96 bg-blue-500 bg-opacity-50 backdrop-blur-lg border border-blue-700 border-opacity-80 overflow-hidden">
+        
+        <div className="absolute inset-0 rounded-2xl border-2 border-blue-300 opacity-20"></div>
+        <div className="absolute inset-0 rounded-2xl border border-blue-400 opacity-30 "></div>
+        <h2 className="text-2xl font-bold text-blue-200 mb-4 text-center">Log In</h2>
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+
+        <form onSubmit={handleLogin} className="relative z-10 flex flex-col items-center">
+          <div className="mb-4 w-full">
+            <label className="block text-blue-100">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded p-2 bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
+              className="mt-1 block w-full border border-blue-300 rounded-2xl p-2 bg-transparent text-blue-100 placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
               required
             />
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-300">Password</label>
+          <div className="mb-4 w-full">
+            <label className="block text-blue-100">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded p-2 bg-transparent text-white placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
+              className="mt-1 block w-full border border-blue-300 rounded-2xl p-2 bg-transparent text-blue-100 placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-spaceBlack text-white font-bold py-2 rounded hover:bg-gray-800"
+            className="w-full bg-blue-600 text-white font-bold py-2 rounded-3xl hover:bg-blue-700"
           >
             Log In
           </button>
         </form>
-        <p className="mt-4 text-center text-gray-300">
+        <p className="mt-4 text-center text-blue-100">
           Don't have an account?{' '}
-          <Link to="/signup" className="hover:underline">
+          <Link to="/signup" className="text-yellow-300 hover:underline">
             Sign Up
           </Link>
         </p>

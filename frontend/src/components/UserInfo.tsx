@@ -7,7 +7,7 @@ interface UserInfoProps {
   profilePicture: string;
 }
 
-const UserInfo: React.FC<UserInfoProps> = ({ username, rating, profilePicture }) => {
+const UserInfo: React.FC<UserInfoProps> = ({ username, rating, profilePicture}) => {
   const sound = new Audio(buttonSound);
 
   const handleMouseEnter = () => {

@@ -1,103 +1,94 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import earthTexture from '../assets/earth.png';
 import cloudsTexture from '../assets/clouds.jpg';
 
-const RotatingEarth: React.FC = () => {
+interface RotatingEarthProps {
+  startCameraMove: boolean;
+  redirectUrl: string;
+}
+
+const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirectUrl }) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const earthRef = useRef<THREE.Mesh | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
+
   useEffect(() => {
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x040d21); // Dark background color
+    sceneRef.current = scene;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 5.5);
-    scene.add(ambientLight);
-    
-    const directionalLight1 = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight1.position.set(5, 5, 5).normalize();
-    scene.add(directionalLight1);
-
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight2.position.set(-5, -5, -5).normalize();
-    scene.add(directionalLight2);
-
-    const pointLight = new THREE.PointLight(0xffffff, 3, 100);
-    pointLight.position.set(0, 10, 10);
-    scene.add(pointLight);
-
+    // Create camera with initial position
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 10, 7);
+    cameraRef.current = camera;
+
+    // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-    const geometry = new THREE.SphereGeometry(5, 120, 120);
+    // Load textures
     const textureLoader = new THREE.TextureLoader();
     const earthTextureImage = textureLoader.load(earthTexture);
-    
-    const material = new THREE.MeshStandardMaterial({ 
-      map: earthTextureImage,
-      roughness: 0.2,
-      metalness: 0.5
-    });
+    earthTextureImage.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-    const earth = new THREE.Mesh(geometry, material);
-    scene.add(earth);
-
-    const cloudsGeometry = new THREE.SphereGeometry(5.1, 120, 120);
     const cloudsTextureImage = textureLoader.load(cloudsTexture);
-    
-    const cloudsMaterial = new THREE.MeshBasicMaterial({
-      map: cloudsTextureImage,
-      transparent: true,
-      opacity: 0.5
-    });
+    cloudsTextureImage.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-    const clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial);
-    scene.add(clouds);
+    // Earth geometry and material
+    const geometry = new THREE.SphereGeometry(5, 256, 256);
+    const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTextureImage });
+    const earth = new THREE.Mesh(geometry, earthMaterial);
+    scene.add(earth);
+    earthRef.current = earth;
 
-    const atmosphereGeometry = new THREE.SphereGeometry(5.05, 120, 120);
-    const atmosphereMaterial = new THREE.MeshStandardMaterial({
-      transparent: true,
-      opacity: 0.5,
-      emissive: 0x1e90ff,
-      emissiveIntensity: 0.7
-    });
+    // Ambient light
+    const ambientLight = new THREE.AmbientLight(0xbbbbbb, 0.3);
+    scene.add(ambientLight);
 
-    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-    scene.add(atmosphere);
+    // Directional light for strong effect on one side
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    directionalLight.position.set(-5, 3, -8); 
+    camera.add(directionalLight); // Attach light to camera
+    scene.add(camera);
 
+    // Orbit controls setup
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableRotate = false;
+    controls.enableZoom = false;
+    controls.enablePan = false;
+    controlsRef.current = controls;
+
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate);
+      const rotationSpeed = 0.0001;
+      if (earthRef.current) earthRef.current.rotation.y += rotationSpeed;
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    // Star background
     const starsGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({ 
-      color: 0x888888,
-      size: 0.1 
-    }); 
+    const starsMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
     const starCount = 1000;
-
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 200;
       positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
     }
-
     starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     const stars = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(stars);
 
-    camera.position.z = 10;
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableZoom = false;
-    controls.enablePan = false;
-
-    const animate = () => {
-      requestAnimationFrame(animate);
-      earth.rotation.y += 0.0001;
-      clouds.rotation.y += 0.0002;
-      controls.update();
-      renderer.render(scene, camera);
-    };
-
-    animate();
-
+    // Handle window resizing
     const handleResize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
@@ -110,13 +101,59 @@ const RotatingEarth: React.FC = () => {
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      controls.dispose();
-      renderer.dispose();
+      if (controlsRef.current) controlsRef.current.dispose();
+      if (rendererRef.current) rendererRef.current.dispose();
       document.body.removeChild(renderer.domElement);
     };
   }, []);
 
-  return null;
+  // Camera movement effect
+  useEffect(() => {
+    if (startCameraMove && cameraRef.current) {
+      const start = new THREE.Vector3(0, 10, 7);
+      const mid = new THREE.Vector3(
+        (Math.random() - 0.5) * 10,
+        (Math.random() - 0.5) * 10,
+        7 + Math.random() * 5
+      );
+      const end = new THREE.Vector3(
+        (Math.random() - 0.5) * 5,
+        (Math.random() - 0.5) * 5,
+        5 + Math.random() * 2
+      );
+
+      const curve = new THREE.CatmullRomCurve3([start, mid, end]);
+      let progress = 0;
+
+      const moveCamera = () => {
+        if (progress <= 1) {
+          const easedProgress = progress < 0.5
+            ? 2 * progress * progress
+            : -1 + (4 - 2 * progress) * progress;
+
+          const position = curve.getPoint(easedProgress);
+          if (cameraRef.current) {
+            cameraRef.current.position.copy(position);
+            cameraRef.current.lookAt(new THREE.Vector3(0, 0, 0));
+          }
+
+          progress += 0.002;
+          requestAnimationFrame(moveCamera);
+        } else {
+          window.location.href = redirectUrl;
+        }
+      };
+
+      moveCamera();
+    }
+  }, [startCameraMove, redirectUrl]);
+
+
+  return (
+    <div>
+
+    </div>
+  );
 };
 
 export default RotatingEarth;
