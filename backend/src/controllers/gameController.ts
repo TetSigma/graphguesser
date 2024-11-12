@@ -6,23 +6,18 @@ import gameService from '../services/gameService';
 export const startGame = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.id;
+    console.log(userId)
     if (!userId) {
       res.status(401).json({ error: 'Unauthorized' });
       return;
     }
-    const gameSession = await gameService.startNewGame(userId);
-    res.status(201).json(gameSession);
-  } catch (error) {
-    res.status(500).json({ error: (error as Error).message });
-  }
-};
 
-// Get a random location for the player to guess
-export const getRandomLocation = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  try {
-    console.log('User ID:', req.user?.id);
-    const location = await gameService.getRandomLocation();
-    res.status(200).json(location);
+    // Start the game and generate a random location
+    const gameSession = await gameService.startNewGame(userId);
+
+    res.status(201).json({
+      gameSession,
+    });
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }

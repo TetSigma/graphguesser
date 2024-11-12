@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import RotatingEarth from '../components/RotatingEarth'; 
-import UserInfo from '../components/UserInfo'; 
-import Leaderboard from '../components/Leaderboard'; 
-import PlayButton from '../components/PlayButton';
+import RotatingEarth from '../components/home/RotatingEarth'; 
+import UserInfo from '../components/home/UserInfo'; 
+import Leaderboard from '../components/home/Leaderboard'; 
+import PlayButton from '../components/home/PlayButton';
 import Loader from '../components/Loader'; 
+import ambientSound from '../assets/ambient.mp3';  // Import ambient sound
+import whooshSound from '../assets/whoosh.mp3';    // Import whoosh sound
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [startCameraMove, setStartCameraMove] = useState(false);
+  
+  const ambientAudioRef = useRef<HTMLAudioElement>(null);  // Reference for ambient audio
+  const whooshAudioRef = useRef<HTMLAudioElement>(null);   // Reference for whoosh audio
 
   const user = {
     username: "John Doe",
@@ -24,21 +29,47 @@ const Home: React.FC = () => {
 
   const handlePlayButtonClick = () => {
     setIsPlaying(true);
-    setStartCameraMove(true);  
+    setStartCameraMove(true);
+
+    if (whooshAudioRef.current) {
+      whooshAudioRef.current.currentTime = 0;   
+      whooshAudioRef.current.play().catch(error => console.error("Whoosh audio play failed:", error));
+
+      // Stop the sound after 5 seconds
+      setTimeout(() => {
+        if (whooshAudioRef.current) whooshAudioRef.current.pause();
+      }, 5000);
+    }
   };
 
   useEffect(() => {
+    // Check if ambient audio is already playing
+    const startAmbientAudio = () => {
+      if (ambientAudioRef.current && ambientAudioRef.current.paused) {
+        ambientAudioRef.current.play().catch(error => console.error("Ambient audio play failed:", error));
+      }
+    };
+
+    // Wait for user interaction to start ambient audio
+    document.addEventListener('click', startAmbientAudio, { once: true });
+
     const timer = setTimeout(() => {
       setLoading(false);  // Simulate loading for 3 seconds
     }, 3000); 
 
-    return () => clearTimeout(timer); 
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('click', startAmbientAudio);
+    };
   }, []);
 
   return (
     <div>
       {loading && <Loader />}
       
+      <audio ref={ambientAudioRef} src={ambientSound} loop />  {/* Add ambient audio element */}
+      <audio ref={whooshAudioRef} src={whooshSound} />  {/* Add whoosh audio element */}
+
       <motion.div
         initial={{ opacity: 1 }}
         animate={{ opacity: isPlaying ? 0 : 1 }}  

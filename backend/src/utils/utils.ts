@@ -8,60 +8,21 @@ export const generateRandomId = (): string => {
 };
 
 // Generate random latitude and longitude within valid geographic ranges
-export const generateRandomLatLon = () => {
-  const lat = Math.random() * (85 - -85) + -85;
-  const lon = Math.random() * (180 - -180) + -180; 
-  return { lat, lon };
+export const generateRandomBBox = () => {
+  // Generate random center lat and lon
+  const centerLat = Math.random() * (85 - -85) + -85;
+  const centerLon = Math.random() * (180 - -180) + -180;
+
+  // Define a small offset range to create a small bounding box around the center point
+  const offset = 0.01;
+
+  const minLat = centerLat - offset;
+  const maxLat = centerLat + offset;
+  const minLon = centerLon - offset;
+  const maxLon = centerLon + offset;
+
+  return { minLon, minLat, maxLon, maxLat };
 };
-
-// Function to snap a location to the nearest road (using Mapillary's imagery)
-export const snapToRoad = async (latitude: number, longitude: number): Promise<{ latitude: number; longitude: number } | null> => {
-  const MAPILLARY_API_URL = 'https://graph.mapillary.com/images';
-  const MAPILLARY_CLIENT_ID = process.env.MAPILLARY_CLIENT_ID;
-
-  console.log('Client ID:', MAPILLARY_CLIENT_ID);
-  console.log('Latitude:', latitude, 'Longitude:', longitude);
-
-  // Define the distance to extend the bounding box (in degrees)
-
-  try {
-    // Use Axios to query the Mapillary API for images within the bounding box
-    const response = await axios.get(MAPILLARY_API_URL, {
-      headers: {
-        'Authorization': `OAuth MLY|8378375865606327|b5a74a1ee921350410c2af79a01e454d`, // Your token
-      },
-      params: {
-        client_id: MAPILLARY_CLIENT_ID,
-        bbox: `-180,-90,180,90`,
-        per_page: 1,
-        page: Math.floor(Math.random() * 1000) + 1
-      },
-    });
-
-    // Log the full response to check the structure
-    console.log('Full Response:', response);
-
-    // If images are found, return the coordinates of the first one as the snapped location
-    if (response.data && response.data.features && response.data.features.length > 0) {
-      const snappedPoint = response.data.features[0].geometry.coordinates;
-      return { latitude: snappedPoint[1], longitude: snappedPoint[0] };
-    }
-
-  } catch (error: unknown) {
-    // Log more detailed error information
-    if (axios.isAxiosError(error)) {
-      console.error('Axios error:', error.response ? error.response.data : error.message);
-    } else if (error instanceof Error) {
-      console.error('Error snapping to road:', error.message);
-    } else {
-      console.error('Unknown error occurred while snapping to road', error);
-    }
-  }
-
-  return null;
-};
-
-
 
 // Function to check if a location has street view imagery (using Mapillary)
 export const getStreetViewMetadata = async (latitude: number, longitude: number): Promise<boolean> => {

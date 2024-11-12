@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
+import useSignup from '../../hooks/auth/useSignup'
 
 const Signup: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-  };
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    name,
+    setName,
+    surname,
+    setSurname,
+    profilePhoto,
+    setProfilePhoto,
+    error,
+    success,
+    handleSignup
+  } = useSignup(); 
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-spaceBlack">
@@ -18,8 +26,10 @@ const Signup: React.FC = () => {
         <div className="absolute inset-0 rounded-2xl border border-blue-400 opacity-30 animate-pulse"></div>
         
         <h2 className="text-2xl font-bold text-blue-200 mb-4 text-center">Sign Up</h2>
+        
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-
+        {success && <p className="text-green-500 mb-4 text-center">{success}</p>}
+        
         <form onSubmit={handleSignup} className="relative z-10 flex flex-col items-center">
           <div className="mb-4 w-full">
             <label className="block text-blue-100">Email</label>
@@ -27,6 +37,35 @@ const Signup: React.FC = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full border border-blue-300 rounded-2xl p-2 bg-transparent text-blue-100 placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-4 w-full">
+            <label className="block text-blue-100">Profile Photo (URL)</label>
+            <input
+              type="url"
+              value={profilePhoto}
+              onChange={(e) => setProfilePhoto(e.target.value)}
+              className="mt-1 block w-full border border-blue-300 rounded-2xl p-2 bg-transparent text-blue-100 placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
+            />
+          </div>
+          <div className="mb-4 w-full">
+            <label className="block text-blue-100">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 block w-full border border-blue-300 rounded-2xl p-2 bg-transparent text-blue-100 placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-4 w-full">
+            <label className="block text-blue-100">Surname</label>
+            <input
+              type="text"
+              value={surname}
+              onChange={(e) => setSurname(e.target.value)}
               className="mt-1 block w-full border border-blue-300 rounded-2xl p-2 bg-transparent text-blue-100 placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500"
               required
             />
