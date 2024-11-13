@@ -16,12 +16,6 @@ const Home: React.FC = () => {
   const ambientAudioRef = useRef<HTMLAudioElement>(null); // Reference for ambient audio
   const whooshAudioRef = useRef<HTMLAudioElement>(null); // Reference for whoosh audio
 
-  const user = {
-    username: "John Doe",
-    rating: 4.5,
-    profilePicture: "https://via.placeholder.com/60",
-  };
-
   const topPlayer = {
     username: "Jane Smith",
     rating: 5.0,
@@ -37,7 +31,6 @@ const Home: React.FC = () => {
         .play()
         .catch((error) => console.error("Whoosh audio play failed:", error));
 
-      // Stop the sound after 5 seconds
       setTimeout(() => {
         if (whooshAudioRef.current) whooshAudioRef.current.pause();
       }, 5000);
@@ -45,7 +38,6 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    // Check if ambient audio is already playing
     const startAmbientAudio = () => {
       if (ambientAudioRef.current && ambientAudioRef.current.paused) {
         ambientAudioRef.current
@@ -80,11 +72,7 @@ const Home: React.FC = () => {
         transition={{ duration: 2 }}
       >
         <RotatingEarth startCameraMove={startCameraMove} redirectUrl="/game" />
-        <UserInfo
-          username={user.username}
-          rating={user.rating}
-          profilePicture={user.profilePicture}
-        />
+        <UserInfo />
         <Leaderboard topPlayer={topPlayer} />
       </motion.div>
       <motion.div

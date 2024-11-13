@@ -11,33 +11,70 @@ const MAPILLARY_ACCESS_TOKEN = process.env.MAPILLARY_ACCESS_TOKEN;
 const startNewGame = async (
   userId: string
 ): Promise<{ gameSessionId: string; imageId: string }> => {
+  const { data: existingSessions, error: sessionError } = await supabase
+    .from("game_sessions")
+    .select("id, location_id")
+    .eq("user_id", userId)
+    .eq("is_complete", false);
+
+  if (sessionError) {
+    console.error(
+      "Error checking for existing game session:",
+      sessionError.message
+    );
+    throw new Error("Error checking for existing game session");
+  }
+
+  if (existingSessions && existingSessions.length === 1) {
+    const existingSession = existingSessions[0];
+    console.log(
+      `Existing game session found. Returning session ID: ${existingSession.id}, Location ID: ${existingSession.location_id}`
+    );
+    return {
+      gameSessionId: existingSession.id,
+      imageId: existingSession.location_id, // Use existing location ID
+    };
+  } else if (existingSessions.length > 1) {
+    console.error(
+      `Multiple incomplete game sessions found for user ${userId}. This should not happen.`
+    );
+    throw new Error("Multiple incomplete game sessions found.");
+  }
+
+  // Handle the case where getRandomLocation returns a Location or null
   const location = await getRandomLocation();
-  console.log(location);
 
   if (!location) {
+    console.error("No location found to start the game.");
     throw new Error("No location found to start the game.");
   }
 
-  // Create a new game session with the location information
+  // Proceed to insert the new game session
   const { data, error } = await supabase
     .from("game_sessions")
     .insert({
       user_id: userId,
       score: 0,
       is_complete: false,
-      location_id: location.id,
+      location_id: location.id, // Use the id of the location object
       latitude: location.latitude,
       longitude: location.longitude,
     })
     .select()
     .single();
+
   if (error) {
+    console.error("Error creating new game session:", error.details);
     throw new Error(`Error creating game session: ${error.details}`);
   }
 
+  console.log(
+    `New game session created. Session ID: ${data.id}, Location ID: ${data.location_id}`
+  );
+
   return {
     gameSessionId: data.id,
-    imageId: location.id,
+    imageId: data.location_id,
   };
 };
 
@@ -45,10 +82,10 @@ const startNewGame = async (
 const getRandomLocation = async (): Promise<Location | null> => {
   // Generate a large bounding box that covers the entire Earth
   const bbox = {
-    minLat: -90, // Min latitude
-    maxLat: 90, // Max latitude
-    minLon: -180, // Min longitude
-    maxLon: 180, // Max longitude
+    minLat: -90,
+    maxLat: 90,
+    minLon: -180,
+    maxLon: 180,
   };
 
   let location: Location | null = null;

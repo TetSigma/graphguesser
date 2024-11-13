@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+// Typescript cant find this declaration file but it works just fine
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import earthTexture from "../../assets/earth.png";
 import cloudsTexture from "../../assets/clouds.jpg";
@@ -13,7 +14,6 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({
   startCameraMove,
   redirectUrl,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
