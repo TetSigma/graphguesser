@@ -1,5 +1,5 @@
-import React from 'react';
-import useSignup from '../../hooks/auth/useSignup'
+import React from "react";
+import useSignup from "../../hooks/auth/useSignup";
 
 const Signup: React.FC = () => {
   const {
@@ -15,22 +15,28 @@ const Signup: React.FC = () => {
     setProfilePhoto,
     error,
     success,
-    handleSignup
-  } = useSignup(); 
+    handleSignup,
+  } = useSignup();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-spaceBlack">
       <div className="relative p-6 rounded-2xl shadow-lg w-96 bg-blue-500 bg-opacity-50 backdrop-blur-lg border border-blue-700 border-opacity-80 overflow-hidden">
-        
         <div className="absolute inset-0 rounded-2xl border-2 border-blue-300 opacity-20"></div>
         <div className="absolute inset-0 rounded-2xl border border-blue-400 opacity-30 animate-pulse"></div>
-        
-        <h2 className="text-2xl font-bold text-blue-200 mb-4 text-center">Sign Up</h2>
-        
+
+        <h2 className="text-2xl font-bold text-blue-200 mb-4 text-center">
+          Sign Up
+        </h2>
+
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-        {success && <p className="text-green-500 mb-4 text-center">{success}</p>}
-        
-        <form onSubmit={handleSignup} className="relative z-10 flex flex-col items-center">
+        {success && (
+          <p className="text-green-500 mb-4 text-center">{success}</p>
+        )}
+
+        <form
+          onSubmit={handleSignup}
+          className="relative z-10 flex flex-col items-center"
+        >
           <div className="mb-4 w-full">
             <label className="block text-blue-100">Email</label>
             <input
@@ -88,7 +94,7 @@ const Signup: React.FC = () => {
           </button>
         </form>
         <p className="mt-4 text-center text-blue-100">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <a href="/login" className="text-yellow-300 hover:underline">
             Log In
           </a>

@@ -1,5 +1,5 @@
-import React from 'react';
-import StyledContainer from '../StyledContainer'
+import React from "react";
+import StyledContainer from "../StyledContainer";
 
 interface PlayButtonProps {
   onClick: () => void;

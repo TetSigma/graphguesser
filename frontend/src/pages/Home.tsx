@@ -1,30 +1,30 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
-import RotatingEarth from '../components/home/RotatingEarth'; 
-import UserInfo from '../components/home/UserInfo'; 
-import Leaderboard from '../components/home/Leaderboard'; 
-import PlayButton from '../components/home/PlayButton';
-import Loader from '../components/Loader'; 
-import ambientSound from '../assets/ambient.mp3';  // Import ambient sound
-import whooshSound from '../assets/whoosh.mp3';    // Import whoosh sound
+import React, { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
+import RotatingEarth from "../components/home/RotatingEarth";
+import UserInfo from "../components/home/UserInfo";
+import Leaderboard from "../components/home/Leaderboard";
+import PlayButton from "../components/home/PlayButton";
+import Loader from "../components/Loader";
+import ambientSound from "../assets/ambient.mp3"; // Import ambient sound
+import whooshSound from "../assets/whoosh.mp3"; // Import whoosh sound
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [startCameraMove, setStartCameraMove] = useState(false);
-  
-  const ambientAudioRef = useRef<HTMLAudioElement>(null);  // Reference for ambient audio
-  const whooshAudioRef = useRef<HTMLAudioElement>(null);   // Reference for whoosh audio
+
+  const ambientAudioRef = useRef<HTMLAudioElement>(null); // Reference for ambient audio
+  const whooshAudioRef = useRef<HTMLAudioElement>(null); // Reference for whoosh audio
 
   const user = {
     username: "John Doe",
     rating: 4.5,
-    profilePicture: "https://via.placeholder.com/60"
+    profilePicture: "https://via.placeholder.com/60",
   };
 
   const topPlayer = {
     username: "Jane Smith",
-    rating: 5.0
+    rating: 5.0,
   };
 
   const handlePlayButtonClick = () => {
@@ -32,8 +32,10 @@ const Home: React.FC = () => {
     setStartCameraMove(true);
 
     if (whooshAudioRef.current) {
-      whooshAudioRef.current.currentTime = 0;   
-      whooshAudioRef.current.play().catch(error => console.error("Whoosh audio play failed:", error));
+      whooshAudioRef.current.currentTime = 0;
+      whooshAudioRef.current
+        .play()
+        .catch((error) => console.error("Whoosh audio play failed:", error));
 
       // Stop the sound after 5 seconds
       setTimeout(() => {
@@ -46,50 +48,49 @@ const Home: React.FC = () => {
     // Check if ambient audio is already playing
     const startAmbientAudio = () => {
       if (ambientAudioRef.current && ambientAudioRef.current.paused) {
-        ambientAudioRef.current.play().catch(error => console.error("Ambient audio play failed:", error));
+        ambientAudioRef.current
+          .play()
+          .catch((error) => console.error("Ambient audio play failed:", error));
       }
     };
 
     // Wait for user interaction to start ambient audio
-    document.addEventListener('click', startAmbientAudio, { once: true });
+    document.addEventListener("click", startAmbientAudio, { once: true });
 
     const timer = setTimeout(() => {
-      setLoading(false);  // Simulate loading for 3 seconds
-    }, 3000); 
+      setLoading(false); // Simulate loading for 3 seconds
+    }, 3000);
 
     return () => {
       clearTimeout(timer);
-      document.removeEventListener('click', startAmbientAudio);
+      document.removeEventListener("click", startAmbientAudio);
     };
   }, []);
 
   return (
     <div>
       {loading && <Loader />}
-      
-      <audio ref={ambientAudioRef} src={ambientSound} loop />  {/* Add ambient audio element */}
-      <audio ref={whooshAudioRef} src={whooshSound} />  {/* Add whoosh audio element */}
-
+      <audio ref={ambientAudioRef} src={ambientSound} loop />{" "}
+      {/* Add ambient audio element */}
+      <audio ref={whooshAudioRef} src={whooshSound} />{" "}
+      {/* Add whoosh audio element */}
       <motion.div
         initial={{ opacity: 1 }}
-        animate={{ opacity: isPlaying ? 0 : 1 }}  
-        transition={{ duration: 2 }}  
+        animate={{ opacity: isPlaying ? 0 : 1 }}
+        transition={{ duration: 2 }}
       >
-        <RotatingEarth startCameraMove={startCameraMove} redirectUrl='/game' />
-        <UserInfo 
-          username={user.username} 
-          rating={user.rating} 
-          profilePicture={user.profilePicture} 
+        <RotatingEarth startCameraMove={startCameraMove} redirectUrl="/game" />
+        <UserInfo
+          username={user.username}
+          rating={user.rating}
+          profilePicture={user.profilePicture}
         />
-        <Leaderboard 
-          topPlayer={topPlayer} 
-        />
+        <Leaderboard topPlayer={topPlayer} />
       </motion.div>
-
-      <motion.div 
-        className='absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10'
+      <motion.div
+        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
         initial={{ opacity: 1 }}
-        animate={{ opacity: isPlaying ? 0 : 1 }} 
+        animate={{ opacity: isPlaying ? 0 : 1 }}
         transition={{ duration: 1 }}
       >
         <PlayButton onClick={handlePlayButtonClick} />

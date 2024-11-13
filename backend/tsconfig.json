@@ -15,7 +15,7 @@
     /* JavaScript Interop */
     "esModuleInterop": true, // Easier imports for CommonJS modules
     "allowSyntheticDefaultImports": true, // Support synthetic imports
-    
+
     /* Type Checking */
     "strict": true, // Enable all strict type-checking options
     "noImplicitAny": true, // Error for implicit 'any' types

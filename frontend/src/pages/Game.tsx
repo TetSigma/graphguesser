@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Viewer, ViewerOptions } from 'mapillary-js';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import React, { useEffect, useRef, useState } from "react";
+import { Viewer, ViewerOptions } from "mapillary-js";
+import { useAuth } from "../context/AuthContext";
+import axios from "axios";
 
 const Game: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null); // Reference to the container div
@@ -15,15 +15,19 @@ const Game: React.FC = () => {
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-      const response = await axios.post(`${backendUrl}/api/game/start`, {}, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.post(
+        `${backendUrl}/api/game/start`,
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       if (!response) {
-        throw new Error('Failed to start game');
+        throw new Error("Failed to start game");
       }
 
       const gameData = response.data; // This should have gameSession
@@ -31,9 +35,8 @@ const Game: React.FC = () => {
       const { imageId } = gameData.gameSession; // Directly extract imageId here
       setImageId(imageId); // Set the imageId from the backend
       setGameStarted(true); // Mark the game as started
-
     } catch (error) {
-      console.error('Error fetching game data:', error);
+      console.error("Error fetching game data:", error);
     }
   };
 
@@ -48,16 +51,16 @@ const Game: React.FC = () => {
     // Only initialize Mapillary viewer if imageId is available
     if (imageId && containerRef.current) {
       const container = containerRef.current;
-      container.style.width = '100vw'; // Set the width of the viewer
-      container.style.height = '100vh'; // Set the height of the viewer
+      container.style.width = "100vw"; // Set the width of the viewer
+      container.style.height = "100vh"; // Set the height of the viewer
 
       const options: ViewerOptions = {
-        accessToken: 'MLY|8378375865606327|b5a74a1ee921350410c2af79a01e454d', // Replace with your Mapillary access token
+        accessToken: "MLY|8378375865606327|b5a74a1ee921350410c2af79a01e454d", // Replace with your Mapillary access token
         container: container, // Attach the viewer to this container
         imageId: imageId, // Use the imageId set from the backend
       };
-      console.log(imageId)
-      console.log('Initializing Mapillary viewer with imageId:', imageId);
+      console.log(imageId);
+      console.log("Initializing Mapillary viewer with imageId:", imageId);
 
       // Initialize the Mapillary viewer
       const viewer = new Viewer(options);

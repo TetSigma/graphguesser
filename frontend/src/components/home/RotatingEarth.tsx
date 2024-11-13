@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import earthTexture from '../../assets/earth.png';
-import cloudsTexture from '../../assets/clouds.jpg';
+import React, { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import earthTexture from "../../assets/earth.png";
+import cloudsTexture from "../../assets/clouds.jpg";
 
 interface RotatingEarthProps {
   startCameraMove: boolean;
   redirectUrl: string;
 }
 
-const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirectUrl }) => {
+const RotatingEarth: React.FC<RotatingEarthProps> = ({
+  startCameraMove,
+  redirectUrl,
+}) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -23,7 +26,12 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
     sceneRef.current = scene;
 
     // Create camera with initial position
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
     camera.position.set(0, 10, 7);
     cameraRef.current = camera;
 
@@ -43,7 +51,9 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
 
     // Earth geometry and material
     const geometry = new THREE.SphereGeometry(5, 256, 256);
-    const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTextureImage });
+    const earthMaterial = new THREE.MeshStandardMaterial({
+      map: earthTextureImage,
+    });
     const earth = new THREE.Mesh(geometry, earthMaterial);
     scene.add(earth);
     earthRef.current = earth;
@@ -54,7 +64,7 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
 
     // Directional light for strong effect on one side
     const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    directionalLight.position.set(-5, 3, -8); 
+    directionalLight.position.set(-5, 3, -8);
     camera.add(directionalLight); // Attach light to camera
     scene.add(camera);
 
@@ -76,7 +86,10 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
 
     // Star background
     const starsGeometry = new THREE.BufferGeometry();
-    const starsMaterial = new THREE.PointsMaterial({ color: 0x888888, size: 0.1 });
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0x888888,
+      size: 0.1,
+    });
     const starCount = 1000;
     const positions = new Float32Array(starCount * 3);
     for (let i = 0; i < starCount; i++) {
@@ -84,7 +97,10 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
       positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
       positions[i * 3 + 2] = (Math.random() - 0.5) * 200;
     }
-    starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    starsGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3)
+    );
     const stars = new THREE.Points(starsGeometry, starsMaterial);
     scene.add(stars);
 
@@ -97,10 +113,10 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
       camera.updateProjectionMatrix();
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       if (controlsRef.current) controlsRef.current.dispose();
       if (rendererRef.current) rendererRef.current.dispose();
       document.body.removeChild(renderer.domElement);
@@ -127,9 +143,10 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
 
       const moveCamera = () => {
         if (progress <= 1) {
-          const easedProgress = progress < 0.5
-            ? 2 * progress * progress
-            : -1 + (4 - 2 * progress) * progress;
+          const easedProgress =
+            progress < 0.5
+              ? 2 * progress * progress
+              : -1 + (4 - 2 * progress) * progress;
 
           const position = curve.getPoint(easedProgress);
           if (cameraRef.current) {
@@ -148,10 +165,7 @@ const RotatingEarth: React.FC<RotatingEarthProps> = ({ startCameraMove, redirect
     }
   }, [startCameraMove, redirectUrl]);
 
-
-  return (
-    <div></div>
-  );
+  return <div></div>;
 };
 
 export default RotatingEarth;

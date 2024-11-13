@@ -1,7 +1,7 @@
-import React from 'react';
-import buttonSound from '../../assets/buttonSound.mp3';
-import { useAuth } from '../../context/AuthContext';
-import StyledContainer from '../StyledContainer'
+import React from "react";
+import buttonSound from "../../assets/buttonSound.mp3";
+import { useAuth } from "../../context/AuthContext";
+import StyledContainer from "../StyledContainer";
 
 const UserInfo: React.FC = () => {
   const { user } = useAuth();
@@ -19,7 +19,10 @@ const UserInfo: React.FC = () => {
 
   return (
     <div className="absolute top-5 left-5 z-10">
-      <StyledContainer className="w-72 flex items-center" onMouseEnter={handleMouseEnter}>
+      <StyledContainer
+        className="w-72 flex items-center"
+        onMouseEnter={handleMouseEnter}
+      >
         <img
           src={user.profile_photo}
           alt="Profile"

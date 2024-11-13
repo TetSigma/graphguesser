@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface StyledContainerProps {
   children: React.ReactNode;
@@ -7,7 +7,12 @@ interface StyledContainerProps {
   onClick?: () => void;
 }
 
-const StyledContainer: React.FC<StyledContainerProps> = ({ children, className, onMouseEnter, onClick }) => {
+const StyledContainer: React.FC<StyledContainerProps> = ({
+  children,
+  className,
+  onMouseEnter,
+  onClick,
+}) => {
   return (
     <div
       className={`bg-blue-500 bg-opacity-50 rounded-full shadow-lg p-4 backdrop-blur-lg border border-blue-700 border-opacity-80 transition-transform duration-300 ease-in-out transform hover:scale-105 relative overflow-hidden ${className}`}

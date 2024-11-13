@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import buttonSound from '../../assets/buttonSound.mp3';
-import StyledContainer from '../StyledContainer';
+import React, { useState } from "react";
+import buttonSound from "../../assets/buttonSound.mp3";
+import StyledContainer from "../StyledContainer";
 
 interface Player {
   username: string;
@@ -31,7 +31,9 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ topPlayer }) => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <StyledContainer className="w-64 flex flex-col items-center">
-        <h2 className="text-blue-200 text-lg font-bold">{topPlayer.username}</h2>
+        <h2 className="text-blue-200 text-lg font-bold">
+          {topPlayer.username}
+        </h2>
         <div className="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
