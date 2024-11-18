@@ -21,21 +21,19 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen bg-spaceBlack">
+    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900  to-[#040D21]">
       <div className="relative p-6 rounded-2xl shadow-lg w-96 bg-blue-500 bg-opacity-50 backdrop-blur-lg border border-blue-700 border-opacity-80 overflow-hidden">
-        <div className="absolute inset-0 rounded-2xl border-2 border-blue-300 opacity-20"></div>
-        <div className="absolute inset-0 rounded-2xl border border-blue-400 opacity-30 "></div>
-        <h2 className="text-2xl font-bold text-blue-200 mb-4 text-center">
-          Log In
+        <div className="absolute inset-0 rounded-lg border border-blue-300 opacity-30"></div>
+        <h2 className="text-2xl font-semibold text-white mb-6 text-center">
+          Welcome to GraphGuesser
         </h2>
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-
         <form
           onSubmit={handleLogin}
-          className="relative z-10 flex flex-col items-center"
+          className="relative z-10 flex flex-col items-center space-y-6"
         >
-          <div className="mb-4 w-full">
-            <label className="block text-blue-100">Email</label>
+          <div className="w-full">
+            <label className="block text-white mb-1">Email</label>
             <input
               type="email"
               value={email}
@@ -44,8 +42,8 @@ const Login: React.FC = () => {
               required
             />
           </div>
-          <div className="mb-4 w-full">
-            <label className="block text-blue-100">Password</label>
+          <div className="w-full">
+            <label className="block text-white mb-1">Password</label>
             <input
               type="password"
               value={password}
@@ -56,12 +54,12 @@ const Login: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-bold py-2 rounded-3xl hover:bg-blue-700"
+            className="w-full bg-blue-900 text-white font-medium py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-200"
           >
             Log In
           </button>
         </form>
-        <p className="mt-4 text-center text-blue-100">
+        <p className="mt-6 text-center text-white">
           Don't have an account?{" "}
           <Link to="/signup" className="text-yellow-300 hover:underline">
             Sign Up

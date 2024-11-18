@@ -19,7 +19,7 @@ const Signup: React.FC = () => {
   } = useSignup();
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-spaceBlack">
+    <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900  to-[#040D21]">
       <div className="relative p-6 rounded-2xl shadow-lg w-96 bg-blue-500 bg-opacity-50 backdrop-blur-lg border border-blue-700 border-opacity-80 overflow-hidden">
         <div className="absolute inset-0 rounded-2xl border-2 border-blue-300 opacity-20"></div>
         <div className="absolute inset-0 rounded-2xl border border-blue-400 opacity-30 animate-pulse"></div>
@@ -88,7 +88,7 @@ const Signup: React.FC = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-bold py-2 rounded-3xl hover:bg-blue-700 transition-colors duration-300"
+            className="w-full bg-blue-900 text-white font-medium py-3 rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg transition duration-200"
           >
             Sign Up
           </button>
