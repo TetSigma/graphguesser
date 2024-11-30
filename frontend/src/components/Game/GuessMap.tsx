@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import React, { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
@@ -14,9 +14,20 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
   const { accessToken } = useAuth();
   const [guess, setGuess] = useState<[number, number] | null>(null);
 
+  // Function to recenter the map
+  const CenterMap: React.FC<{ position: [number, number] | null }> = ({ position }) => {
+    const map = useMap();
+    useEffect(() => {
+      if (position) {
+        map.setView(position, 10); // Zoom level 10 for a closer look
+      }
+    }, [position, map]);
+    return null;
+  };
+
   const handleMapClick = (event: L.LeafletMouseEvent) => {
     const { lat, lng } = event.latlng;
-    console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`); 
+    console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`);
     setGuess([lat, lng]);
   };
 
@@ -76,13 +87,14 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
               </Popup>
             </Marker>
           )}
+          <CenterMap position={guess} />
         </MapContainer>
       </div>
       <button
         onClick={submitGuess}
         className="absolute bottom-2 right-2 bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 z-50"
       >
-       Guess
+        Guess
       </button>
     </div>
   );
@@ -95,8 +107,8 @@ interface ClickHandlerProps {
 const ClickHandler: React.FC<ClickHandlerProps> = ({ onMapClick }) => {
   useMapEvents({
     click: (event: L.LeafletMouseEvent) => {
-      console.log("Map click event triggered"); 
-      console.log("Event:", event); 
+      console.log("Map click event triggered");
+      console.log("Event:", event);
       onMapClick(event);
     },
   });
