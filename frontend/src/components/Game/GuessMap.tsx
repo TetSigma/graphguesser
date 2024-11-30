@@ -102,7 +102,7 @@ interface ClickHandlerProps {
 
 const ClickHandler: React.FC<ClickHandlerProps> = ({ onMapClick }) => {
   useMapEvents({
-    click: (event) => onMapClick(event),
+    click: (event: L.LeafletMouseEvent) => onMapClick(event), // Explicitly type the parameter
   });
   return null;
 };

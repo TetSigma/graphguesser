@@ -11,6 +11,7 @@ interface UseGameDataReturn {
 
 const useGameData = (): UseGameDataReturn => {
   const [imageId, setImageId] = useState<string | null>(null);
+  const [gameId, setGameId] = useState<string | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
   const { accessToken } = useAuth();
 
@@ -32,9 +33,9 @@ const useGameData = (): UseGameDataReturn => {
       if (!response) throw new Error("Failed to start game");
 
       const gameData = response.data;
-      const { imageId } = gameData.gameSession;
-
+      const { imageId } = gameData.gameSession
       setImageId(imageId);
+      setGameId(gameData.gameSessionId);
       setGameStarted(true);
     } catch (error) {
       console.error("Error fetching game data:", error);
