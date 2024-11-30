@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 interface UseGameDataReturn {
   imageId: string | null;
   gameStarted: boolean;
+  gameId: string | null;
   fetchGameData: () => void;
 }
 
@@ -33,9 +34,9 @@ const useGameData = (): UseGameDataReturn => {
       if (!response) throw new Error("Failed to start game");
 
       const gameData = response.data;
-      const { imageId } = gameData.gameSession
+      const { imageId, gameSessionId } = gameData.gameSession
       setImageId(imageId);
-      setGameId(gameData.gameSessionId);
+      setGameId(gameSessionId);
       setGameStarted(true);
     } catch (error) {
       console.error("Error fetching game data:", error);
@@ -48,7 +49,7 @@ const useGameData = (): UseGameDataReturn => {
     }
   }, [accessToken, gameStarted]);
 
-  return { imageId, gameStarted, fetchGameData };
+  return { imageId, gameStarted, gameId, fetchGameData };
 };
 
 export default useGameData;

@@ -53,22 +53,15 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
 
   return (
     <div
-      style={{
-        position: "absolute",
-        bottom: "10px",
-        right: "10px",
-        width: "300px",
-        height: "300px",
-        border: "2px solid black",
-        borderRadius: "8px",
-        overflow: "hidden",
-        zIndex: 1000,
-      }}
+      className="absolute bottom-10 right-10 w-72 h-72  rounded-lg overflow-hidden z-50 
+        transform  hover:scale-125 hover:w-[600px] hover:h-[400px]
+        hover:origin-bottom-right
+        border-2 border-blue-700 border-opacity-80"
     >
       <MapContainer
         center={[0, 0]}
         zoom={2}
-        style={{ width: "100%", height: "100%" }}
+        className="w-full h-full"
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -78,17 +71,7 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
       </MapContainer>
       <button
         onClick={submitGuess}
-        style={{
-          position: "absolute",
-          bottom: "10px",
-          left: "10px",
-          backgroundColor: "#007BFF",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          padding: "5px 10px",
-          cursor: "pointer",
-        }}
+        className="absolute bottom-2 left-2 bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 z-10"
       >
         Submit Guess
       </button>
@@ -108,3 +91,4 @@ const ClickHandler: React.FC<ClickHandlerProps> = ({ onMapClick }) => {
 };
 
 export default GuessMap;
+
