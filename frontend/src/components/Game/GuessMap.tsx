@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
@@ -16,8 +16,8 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
 
   const handleMapClick = (event: L.LeafletMouseEvent) => {
     const { lat, lng } = event.latlng;
+    console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`); // Debug log
     setGuess([lat, lng]);
-    console.log(`Guess location set: Latitude: ${lat}, Longitude: ${lng}`);
   };
 
   const submitGuess = async () => {
@@ -53,8 +53,8 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
 
   return (
     <div
-      className="absolute bottom-10 right-10 w-72 h-72  rounded-lg overflow-hidden z-50 
-        transform  hover:scale-125 hover:w-[600px] hover:h-[400px]
+      className="absolute bottom-10 right-20 w-72 h-72 rounded-lg overflow-hidden z-50 
+        transform hover:scale-125 hover:w-[600px] hover:h-[400px]
         hover:origin-bottom-right
         border-2 border-blue-700 border-opacity-80"
     >
@@ -68,6 +68,13 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
         <ClickHandler onMapClick={handleMapClick} />
+        {guess && (
+          <Marker position={guess}>
+            <Popup>
+              You guessed at Latitude: {guess[0].toFixed(4)}, Longitude: {guess[1].toFixed(4)}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
       <button
         onClick={submitGuess}
@@ -85,10 +92,13 @@ interface ClickHandlerProps {
 
 const ClickHandler: React.FC<ClickHandlerProps> = ({ onMapClick }) => {
   useMapEvents({
-    click: (event: L.LeafletMouseEvent) => onMapClick(event), // Explicitly type the parameter
+    click: (event: L.LeafletMouseEvent) => {
+      console.log("Map click event triggered"); // Debug log
+      console.log("Event:", event); // Log the event object for further inspection
+      onMapClick(event);
+    },
   });
   return null;
 };
 
 export default GuessMap;
-
