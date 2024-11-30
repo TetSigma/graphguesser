@@ -16,7 +16,7 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
 
   const handleMapClick = (event: L.LeafletMouseEvent) => {
     const { lat, lng } = event.latlng;
-    console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`); // Debug log
+    console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`); 
     setGuess([lat, lng]);
   };
 
@@ -52,35 +52,37 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
   };
 
   return (
-    <div
-      className="absolute bottom-10 right-20 w-72 h-72 rounded-lg overflow-hidden z-50 
-        transform hover:scale-125 hover:w-[600px] hover:h-[400px]
-        hover:origin-bottom-right
-        border-2 border-blue-700 border-opacity-80"
-    >
-      <MapContainer
-        center={[0, 0]}
-        zoom={2}
-        className="w-full h-full"
+    <div className="relative">
+      <div
+        className="absolute bottom-10 right-20 w-72 h-72 rounded-lg overflow-hidden z-50 
+          hover:scale-125 hover:w-[600px] hover:h-[400px]
+          hover:origin-bottom-right transition-transform duration-300 transform ease-out
+          border-2 border-blue-700 border-opacity-80"
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <ClickHandler onMapClick={handleMapClick} />
-        {guess && (
-          <Marker position={guess}>
-            <Popup>
-              You guessed at Latitude: {guess[0].toFixed(4)}, Longitude: {guess[1].toFixed(4)}
-            </Popup>
-          </Marker>
-        )}
-      </MapContainer>
+        <MapContainer
+          center={[0, 0]}
+          zoom={2}
+          className="w-full h-full"
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <ClickHandler onMapClick={handleMapClick} />
+          {guess && (
+            <Marker position={guess}>
+              <Popup>
+                You guessed at Latitude: {guess[0].toFixed(4)}, Longitude: {guess[1].toFixed(4)}
+              </Popup>
+            </Marker>
+          )}
+        </MapContainer>
+      </div>
       <button
         onClick={submitGuess}
-        className="absolute bottom-2 left-2 bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 z-10"
+        className="absolute bottom-2 right-2 bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 z-50"
       >
-        Submit Guess
+       Guess
       </button>
     </div>
   );
@@ -93,8 +95,8 @@ interface ClickHandlerProps {
 const ClickHandler: React.FC<ClickHandlerProps> = ({ onMapClick }) => {
   useMapEvents({
     click: (event: L.LeafletMouseEvent) => {
-      console.log("Map click event triggered"); // Debug log
-      console.log("Event:", event); // Log the event object for further inspection
+      console.log("Map click event triggered"); 
+      console.log("Event:", event); 
       onMapClick(event);
     },
   });
