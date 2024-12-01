@@ -1,29 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
+import React, { useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
+import { useGuessGame } from "../../hooks/game/useGuessGame"
 
-interface MapProps {
-  gameId: string;
-  onGuessSubmitted: (score: number, distance: number) => void;
-}
-
-const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
-  const { accessToken } = useAuth();
+const GuessMap: React.FC = () => {
+  const { gameState, startNewGame, submitGuess } = useGuessGame();
   const [guess, setGuess] = useState<[number, number] | null>(null);
-
-  // Function to recenter the map
-  const CenterMap: React.FC<{ position: [number, number] | null }> = ({ position }) => {
-    const map = useMap();
-    useEffect(() => {
-      if (position) {
-        map.setView(position, 10); // Zoom level 10 for a closer look
-      }
-    }, [position, map]);
-    return null;
-  };
 
   const handleMapClick = (event: L.LeafletMouseEvent) => {
     const { lat, lng } = event.latlng;
@@ -31,44 +14,23 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
     setGuess([lat, lng]);
   };
 
-  const submitGuess = async () => {
+  const handleSubmit = () => {
     if (!guess) {
-      alert("Please click on the map to make a guess!");
+      alert("Please make a guess by clicking on the map!");
       return;
     }
 
-    try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL;
-      const response = await axios.post(
-        `${backendUrl}/api/game/guess`,
-        {
-          gameId,
-          latitude: guess[0],
-          longitude: guess[1],
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      const { score, distance } = response.data;
-      console.log(`Guess submitted! Score: ${score}, Distance: ${distance}km`);
-      onGuessSubmitted(score, distance);
-    } catch (error) {
-      console.error("Error submitting guess:", error);
-    }
+    const [latitude, longitude] = guess;
+    submitGuess(latitude, longitude);
+    console.log(gameState)
   };
 
   return (
     <div className="relative">
-      <div
-        className="absolute bottom-10 right-20 w-72 h-72 rounded-lg overflow-hidden z-50 
-          hover:scale-125 hover:w-[600px] hover:h-[400px]
-          hover:origin-bottom-right transition-transform duration-300 transform ease-out
-          border-2 border-blue-700 border-opacity-80"
+      <div className="absolute bottom-10 right-20 w-72 h-72 rounded-lg overflow-hidden z-50 
+            hover:scale-125 hover:w-[600px] hover:h-[400px]
+            hover:origin-bottom-right transition-transform duration-300 transform ease-out
+            border-2 border-blue-700 border-opacity-80"
       >
         <MapContainer
           center={[0, 0]}
@@ -87,15 +49,27 @@ const GuessMap: React.FC<MapProps> = ({ gameId, onGuessSubmitted }) => {
               </Popup>
             </Marker>
           )}
-          <CenterMap position={guess} />
         </MapContainer>
       </div>
       <button
-        onClick={submitGuess}
-        className="absolute bottom-2 right-2 bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 z-50"
+        onClick={handleSubmit}
+        className="absolute bottom-4 left-1/2 transform z-50 -translate-x-1/2 bg-blue-500 rounded-full shadow-lg p-4 text-white hover:bg-blue-600"
       >
         Guess
       </button>
+      <button
+        onClick={startNewGame}
+        className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 rounded-full shadow-lg p-4 text-white hover:bg-green-600"
+      >
+        Start New Game
+      </button>
+      {gameState && (
+        <div className="absolute top-4 right-4 bg-white p-4 rounded shadow-lg">
+          <p>Score: {gameState.score}</p>
+          <p>Distance: {gameState.distance.toFixed(2)} km</p>
+          <p>Game Complete: {gameState.isGameComplete ? "Yes" : "No"}</p>
+        </div>
+      )}
     </div>
   );
 };
@@ -106,11 +80,7 @@ interface ClickHandlerProps {
 
 const ClickHandler: React.FC<ClickHandlerProps> = ({ onMapClick }) => {
   useMapEvents({
-    click: (event: L.LeafletMouseEvent) => {
-      console.log("Map click event triggered");
-      console.log("Event:", event);
-      onMapClick(event);
-    },
+    click: onMapClick,
   });
   return null;
 };
