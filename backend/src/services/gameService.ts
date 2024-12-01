@@ -8,55 +8,41 @@ config();
 const MAPILLARY_ACCESS_TOKEN = process.env.MAPILLARY_ACCESS_TOKEN;
 
 // Start a new game session and generate a random location for the player to guess
-const startNewGame = async (
-  userId: string
-): Promise<{ gameSessionId: string; imageId: string }> => {
-  const { data: existingSessions, error: sessionError } = await supabase
+const startNewGame = async (userId: string): Promise<{ gameSessionId: string; imageId: string }> => {
+  // Lock or check first to prevent multiple calls from creating new sessions
+  const { data: existingSession, error: sessionError } = await supabase
     .from("game_sessions")
     .select("id, location_id")
     .eq("user_id", userId)
-    .eq("is_complete", false);
+    .eq("is_complete", false)
+    .single(); // Only fetch one record
 
-  if (sessionError) {
-    console.error(
-      "Error checking for existing game session:",
-      sessionError.message
-    );
+  if (sessionError && sessionError.code !== "PGRST116") { // Handle non-empty results
+    console.error("Error checking for existing game session:", sessionError.message);
     throw new Error("Error checking for existing game session");
   }
 
-  if (existingSessions && existingSessions.length === 1) {
-    const existingSession = existingSessions[0];
-    console.log(
-      `Existing game session found. Returning session ID: ${existingSession.id}, Location ID: ${existingSession.location_id}`
-    );
+  if (existingSession) {
     return {
       gameSessionId: existingSession.id,
-      imageId: existingSession.location_id, // Use existing location ID
+      imageId: existingSession.location_id,
     };
-  } else if (existingSessions.length > 1) {
-    console.error(
-      `Multiple incomplete game sessions found for user ${userId}. This should not happen.`
-    );
-    throw new Error("Multiple incomplete game sessions found.");
   }
 
-  // Handle the case where getRandomLocation returns a Location or null
+  // Proceed to create a new game session if no active session exists
   const location = await getRandomLocation();
 
   if (!location) {
-    console.error("No location found to start the game.");
     throw new Error("No location found to start the game.");
   }
 
-  // Proceed to insert the new game session
   const { data, error } = await supabase
     .from("game_sessions")
     .insert({
       user_id: userId,
       score: 0,
       is_complete: false,
-      location_id: location.id, // Use the id of the location object
+      location_id: location.id,
       latitude: location.latitude,
       longitude: location.longitude,
     })
@@ -64,19 +50,15 @@ const startNewGame = async (
     .single();
 
   if (error) {
-    console.error("Error creating new game session:", error.details);
     throw new Error(`Error creating game session: ${error.details}`);
   }
-
-  console.log(
-    `New game session created. Session ID: ${data.id}, Location ID: ${data.location_id}`
-  );
 
   return {
     gameSessionId: data.id,
     imageId: data.location_id,
   };
 };
+
 
 // Get a random location from Mapillary based on a random bounding box
 const getRandomLocation = async (): Promise<Location | null> => {
@@ -121,40 +103,55 @@ const evaluateGuess = async (
   userId: string,
   guessLat: number,
   guessLon: number
-): Promise<{ score: number; distance: number }> => {
+): Promise<{ score: number; distance: number; realCoordinates: { latitude: number; longitude: number } }> => {
+  // Fetch the game session data
   const { data: game, error: gameError } = await supabase
     .from("game_sessions")
-    .select()
+    .select("latitude, longitude, score, is_complete") // Fetch relevant fields
     .eq("id", gameId)
     .eq("user_id", userId)
     .single();
 
-  if (gameError || !game) throw new Error("Game session not found");
+  if (gameError || !game) {
+    console.error("Game session not found", gameError);
+    throw new Error("Game session not found");
+  }
 
-  const { data: location, error: locationError } = await supabase
-    .from("locations")
-    .select()
-    .eq("id", game.location_id) // Fetch the location for this game
-    .single();
-
-  if (locationError || !location) throw new Error("Location not found");
-
+  // Calculate distance and score
   const distance = calculateDistance(
-    location.latitude,
-    location.longitude,
+    game.latitude,
+    game.longitude,
     guessLat,
     guessLon
   );
   const score = calculateScore(distance);
 
-  // Update the score in the game session
-  await supabase
+  // Update the score and mark the session as complete
+  const { error: updateError } = await supabase
     .from("game_sessions")
-    .update({ score: game.score + score })
+    .update({ 
+      score: game.score + score, 
+      is_complete: true // Mark as completed
+    })
     .eq("id", gameId);
 
-  return { score, distance };
+  if (updateError) {
+    console.error("Error updating score or marking session as complete:", updateError);
+    throw new Error("Error updating game session");
+  }
+
+  // Return the results to the user
+  return { 
+    score, 
+    distance, 
+    realCoordinates: { 
+      latitude: game.latitude, 
+      longitude: game.longitude 
+    } 
+  };
 };
+
+
 
 // Get the final results of a completed game
 const getGameResults = async (

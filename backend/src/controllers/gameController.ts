@@ -21,6 +21,7 @@ export const startGame = async (
     res.status(201).json({
       gameSession,
     });
+    console.log(gameSession)
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -34,7 +35,6 @@ export const submitGuess = async (
   try {
     const userId = req.user?.id;
     const { gameId, latitude, longitude } = req.body;
-
     if (!userId) {
       res.status(401).json({ error: "Unauthorized" });
       return;
@@ -47,6 +47,7 @@ export const submitGuess = async (
       longitude
     );
     res.status(200).json(feedback);
+    console.log(feedback)
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }

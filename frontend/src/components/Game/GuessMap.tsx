@@ -1,29 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { useGuessGame } from "../../hooks/game/useGuessGame"
+import useGuessGame from "../../hooks/game/useGuessGame"
 
 const GuessMap: React.FC = () => {
-  const { gameState, startNewGame, submitGuess } = useGuessGame();
+  const { submitGuess } = useGuessGame();
   const [guess, setGuess] = useState<[number, number] | null>(null);
 
   const handleMapClick = (event: L.LeafletMouseEvent) => {
     const { lat, lng } = event.latlng;
     console.log(`Clicked at Latitude: ${lat}, Longitude: ${lng}`);
     setGuess([lat, lng]);
+    console.log("Updated guess state:", [lat, lng]);
   };
+  
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
+    console.log("Submitting guess. Current state:", guess);
     if (!guess) {
       alert("Please make a guess by clicking on the map!");
       return;
     }
-
+  
     const [latitude, longitude] = guess;
     submitGuess(latitude, longitude);
-    console.log(gameState)
-  };
+  }, [guess, submitGuess]);
 
   return (
     <div className="relative">
@@ -57,19 +59,6 @@ const GuessMap: React.FC = () => {
       >
         Guess
       </button>
-      <button
-        onClick={startNewGame}
-        className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-green-500 rounded-full shadow-lg p-4 text-white hover:bg-green-600"
-      >
-        Start New Game
-      </button>
-      {gameState && (
-        <div className="absolute top-4 right-4 bg-white p-4 rounded shadow-lg">
-          <p>Score: {gameState.score}</p>
-          <p>Distance: {gameState.distance.toFixed(2)} km</p>
-          <p>Game Complete: {gameState.isGameComplete ? "Yes" : "No"}</p>
-        </div>
-      )}
     </div>
   );
 };
