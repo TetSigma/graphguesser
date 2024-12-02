@@ -2,9 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 
-// Singleton variable to track if the data has already been fetched
-let hasFetchedOnce = false;
-
 interface UseGameDataReturn {
   imageId: string | null;
   gameStarted: boolean;
@@ -20,10 +17,11 @@ const useGameData = (): UseGameDataReturn => {
   const [gameStarted, setGameStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false); // State-based flag
   const { accessToken } = useAuth();
 
   const fetchGameData = useCallback(async () => {
-    if (isLoading || gameStarted || hasFetchedOnce) return; // Guard conditions to prevent multiple calls
+    if (isLoading || gameStarted || hasFetchedOnce) return;
 
     setIsLoading(true);
     setError(null);
@@ -41,28 +39,28 @@ const useGameData = (): UseGameDataReturn => {
         }
       );
 
-      console.log("Game data response:", response);
+      if (!response || !response.data || !response.data.gameSession) {
+        throw new Error("Invalid game session data received from server.");
+      }
 
-      if (!response || !response.data) throw new Error("Failed to start game");
+      const { imageId, gameSessionId } = response.data.gameSession;
+      if (!imageId || !gameSessionId) {
+        throw new Error("Incomplete game session data received.");
+      }
 
-      const gameData = response.data;
-      const { imageId, gameSessionId } = gameData.gameSession;
       setImageId(imageId);
       setGameId(gameSessionId);
       setGameStarted(true);
-      hasFetchedOnce = true; 
+      setHasFetchedOnce(true);
     } catch (err) {
-      setError(
-        (err as Error)?.message || "An unexpected error occurred while fetching game data."
-      );
+      setError((err as Error)?.message || "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
-  }, [accessToken, gameStarted, isLoading]);
+  }, [accessToken, gameStarted, isLoading, hasFetchedOnce]);
 
   useEffect(() => {
     if (accessToken && !gameStarted && !hasFetchedOnce) {
-      console.log("Fetching game data...");
       fetchGameData();
     }
   }, [accessToken, gameStarted, fetchGameData]);

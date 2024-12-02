@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Viewer, ViewerOptions } from "mapillary-js";
 import useGameData from "../hooks/game/useGameData";
 import GuessMap from "../components/Game/GuessMap";
+import Loader from "../components/Loader";
 
 const Game: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(true); // Loading state
   const { imageId } = useGameData();
 
   useEffect(() => {
@@ -21,12 +23,20 @@ const Game: React.FC = () => {
 
       const viewer = new Viewer(options);
 
-      return () => viewer.remove();
+      // Assume viewer is ready after it's created and imageId is set
+      setLoading(false);
+
+      return () => {
+        if (viewer) {
+          viewer.remove();
+        }
+      };
     }
   }, [imageId]);
 
   return (
     <div>
+      {loading && <Loader />} {/* Show loader until the viewer is loaded */}
       <div ref={containerRef}></div>
       <GuessMap />
     </div>
@@ -34,3 +44,4 @@ const Game: React.FC = () => {
 };
 
 export default Game;
+

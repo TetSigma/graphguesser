@@ -15,12 +15,7 @@ const useGuessGame = () => {
   const [gameState, setGameState] = useState<GuessGameState | null>(null);
 
   // useCallback to memoize the submitGuess function
-  const submitGuess = useCallback(async (latitude: number, longitude: number) => {
-    if (!gameId) {
-      alert("Game is not active. Please start a new game.");
-      return;
-    }
-  
+  const submitGuess = useCallback(async (latitude: number, longitude: number) => {  
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
       const response = await axios.post(
