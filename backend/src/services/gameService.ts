@@ -9,13 +9,13 @@ const MAPILLARY_ACCESS_TOKEN = process.env.MAPILLARY_ACCESS_TOKEN;
 
 // Start a new game session and generate a random location for the player to guess
 const startNewGame = async (userId: string): Promise<{ gameSessionId: string; imageId: string }> => {
-  // Lock or check first to prevent multiple calls from creating new sessions
+
   const { data: existingSession, error: sessionError } = await supabase
     .from("game_sessions")
     .select("id, location_id")
     .eq("user_id", userId)
     .eq("is_complete", false)
-    .single(); // Only fetch one record
+    .single(); 
 
   if (sessionError && sessionError.code !== "PGRST116") { // Handle non-empty results
     console.error("Error checking for existing game session:", sessionError.message);
@@ -114,7 +114,6 @@ const evaluateGuess = async (
   guessLat: number,
   guessLon: number
 ): Promise<{ score: number; distance: number; realCoordinates: { latitude: number; longitude: number } }> => {
-  // Fetch the game session data
   const { data: game, error: gameError } = await supabase
     .from("game_sessions")
     .select("latitude, longitude, score, is_complete")
@@ -127,7 +126,6 @@ const evaluateGuess = async (
     throw new Error("Game session not found");
   }
 
-  // Calculate distance and score
   const distance = calculateDistance(
     game.latitude,
     game.longitude,
@@ -135,7 +133,7 @@ const evaluateGuess = async (
     guessLon
   );
   const score = calculateScore(distance);
-  // If score is greater than 0, update user's rating
+
   if (score > 0) {
     
     const { data: users, error: fetchError } = await supabase
@@ -189,8 +187,6 @@ const evaluateGuess = async (
 };
 
 
-
-// Get the final results of a completed game
 const getGameResults = async (
   gameId: string,
   userId: string

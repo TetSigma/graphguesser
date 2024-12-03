@@ -17,7 +17,6 @@ export const refreshSession = async (refreshToken: string) => {
 
   const { access_token, user } = data.session;
 
-  // Fetch user profile data (name, surname, profile_photo, rating)
   const { data: profileData, error: profileError } = await supabase
     .from("users")
     .select("name, surname, profile_photo, rating")
@@ -89,7 +88,6 @@ export const login = async (email: string, password: string) => {
 
   const { user } = data;
 
-  // Fetch user profile data (name, surname, profile_photo, rating)
   const { data: profileData, error: profileError } = await supabase
     .from("users")
     .select("name, surname, profile_photo, rating")
