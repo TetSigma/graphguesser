@@ -1,10 +1,7 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
 
-// Fix Leaflet default icon issue
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 interface GameResultsProps {
   guess: [number, number] | null;

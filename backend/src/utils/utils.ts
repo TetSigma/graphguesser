@@ -80,5 +80,5 @@ export const calculateDistance = (
 
 // Calculate score based on distance (smaller distance gives a better score)
 export const calculateScore = (distance: number): number => {
-  return Math.round(Math.max(1000 - distance * 10, 0)); // Round the score to the nearest integer
+  return Math.round(Math.max(500 - distance * 5, 0)); // Max 500 points, lose 5 points per km
 };
