@@ -17,7 +17,7 @@ const useGameData = (): UseGameDataReturn => {
   const [gameStarted, setGameStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasFetchedOnce, setHasFetchedOnce] = useState(false); // State-based flag
+  const [hasFetchedOnce, setHasFetchedOnce] = useState(false); 
   const { accessToken } = useAuth();
 
   const fetchGameData = useCallback(async () => {
