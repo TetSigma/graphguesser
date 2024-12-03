@@ -12,7 +12,7 @@ import Loader from "../components/Loader";
 interface AuthContextType {
   isAuthenticated: boolean;
   user: any | null;
-  accessToken: string | null; // Add this to store the accessToken
+  accessToken: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null); // Store the accessToken here
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -38,7 +38,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           { refreshToken }
         );
         const { access_token, user: authUser } = response.data;
-        setAccessToken(access_token); // Store the access token
+        setAccessToken(access_token);
         localStorage.setItem("accessToken", access_token);
         axios.defaults.headers.common[
           "Authorization"
@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     } else {
       setIsAuthenticated(false);
     }
-    setIsLoading(false); // Finish loading after restore attempt
+    setIsLoading(false); 
   };
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         password,
       });
       const { access_token, refresh_token, user } = response.data.session;
-      setAccessToken(access_token); // Set the access token in context
+      setAccessToken(access_token); 
       localStorage.setItem("accessToken", access_token);
       localStorage.setItem("refreshToken", refresh_token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
@@ -84,7 +84,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.removeItem("refreshToken");
     setIsAuthenticated(false);
     setUser(null);
-    setAccessToken(null); // Clear the access token on logout
+    setAccessToken(null);
     navigate("/login");
   };
 

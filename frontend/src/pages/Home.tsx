@@ -5,16 +5,16 @@ import UserInfo from "../components/home/UserInfo";
 import Leaderboard from "../components/home/Leaderboard";
 import PlayButton from "../components/home/PlayButton";
 import Loader from "../components/Loader";
-import ambientSound from "../assets/ambient.mp3"; // Import ambient sound
-import whooshSound from "../assets/whoosh.mp3"; // Import whoosh sound
+import ambientSound from "../assets/ambient.mp3"; 
+import whooshSound from "../assets/whoosh.mp3"; 
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [startCameraMove, setStartCameraMove] = useState(false);
 
-  const ambientAudioRef = useRef<HTMLAudioElement>(null); // Reference for ambient audio
-  const whooshAudioRef = useRef<HTMLAudioElement>(null); // Reference for whoosh audio
+  const ambientAudioRef = useRef<HTMLAudioElement>(null); 
+  const whooshAudioRef = useRef<HTMLAudioElement>(null); 
 
   const topPlayer = {
     username: "Jane Smith",
@@ -46,11 +46,10 @@ const Home: React.FC = () => {
       }
     };
 
-    // Wait for user interaction to start ambient audio
     document.addEventListener("click", startAmbientAudio, { once: true });
 
     const timer = setTimeout(() => {
-      setLoading(false); // Simulate loading for 3 seconds
+      setLoading(false); 
     }, 3000);
 
     return () => {
@@ -63,9 +62,7 @@ const Home: React.FC = () => {
     <div>
       {loading && <Loader />}
       <audio ref={ambientAudioRef} src={ambientSound} loop />{" "}
-      {/* Add ambient audio element */}
       <audio ref={whooshAudioRef} src={whooshSound} />{" "}
-      {/* Add whoosh audio element */}
       <motion.div
         initial={{ opacity: 1 }}
         animate={{ opacity: isPlaying ? 0 : 1 }}

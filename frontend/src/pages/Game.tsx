@@ -6,7 +6,7 @@ import Loader from "../components/Loader";
 
 const Game: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true); 
   const { imageId } = useGameData();
 
   useEffect(() => {
@@ -23,7 +23,6 @@ const Game: React.FC = () => {
 
       const viewer = new Viewer(options);
 
-      // Assume viewer is ready after it's created and imageId is set
       setLoading(false);
 
       return () => {
@@ -36,7 +35,7 @@ const Game: React.FC = () => {
 
   return (
     <div>
-      {loading && <Loader />} {/* Show loader until the viewer is loaded */}
+      {loading && <Loader />} 
       <div ref={containerRef}></div>
       <GuessMap />
     </div>
