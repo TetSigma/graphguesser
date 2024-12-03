@@ -7,6 +7,7 @@ export interface GuessGameState {
   score: number;
   distance: number;
   isGameComplete: boolean;
+  realCoordinates: { latitude: number; longitude: number };
 }
 
 const useGuessGame = () => {
@@ -14,7 +15,6 @@ const useGuessGame = () => {
   const { gameId, imageId } = useGameData();
   const [gameState, setGameState] = useState<GuessGameState | null>(null);
 
-  // useCallback to memoize the submitGuess function
   const submitGuess = useCallback(async (latitude: number, longitude: number) => {  
     try {
       const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -32,18 +32,15 @@ const useGuessGame = () => {
         }
       );
 
-      console.log(response);
+      console.log("Backend Response:", response.data);
 
-      const { score, distance } = response.data;
+      const { score, distance, realCoordinates } = response.data;
 
-      setGameState((prevState) => {
-        if (!prevState) return null;
-        return {
-          ...prevState,
-          score,
-          distance,
-          isGameComplete: distance < 1,
-        };
+      setGameState({
+        score,
+        distance,
+        realCoordinates,
+        isGameComplete: true,
       });
     } catch (error) {
       console.error("Error submitting guess:", error);

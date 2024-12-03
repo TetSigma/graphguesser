@@ -3,9 +3,10 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaf
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import useGuessGame from "../../hooks/game/useGuessGame"
+import GameResults from './GameResults';
 
 const GuessMap: React.FC = () => {
-  const { submitGuess } = useGuessGame();
+  const { gameState, submitGuess } = useGuessGame();
   const [guess, setGuess] = useState<[number, number] | null>(null);
 
   const handleMapClick = (event: L.LeafletMouseEvent) => {
@@ -22,10 +23,11 @@ const GuessMap: React.FC = () => {
       alert("Please make a guess by clicking on the map!");
       return;
     }
-  
     const [latitude, longitude] = guess;
     submitGuess(latitude, longitude);
   }, [guess, submitGuess]);
+
+  console.log("Game State:", gameState);
 
   return (
     <div className="relative">
@@ -35,9 +37,10 @@ const GuessMap: React.FC = () => {
             border-2 border-blue-700 border-opacity-80"
       >
         <MapContainer
-          center={[0, 0]}
+          center={[20, 0]}
           zoom={2}
-          className="w-full h-full"
+          style={{ height: "100%", width: "100%" }}
+          scrollWheelZoom={true}
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -53,12 +56,24 @@ const GuessMap: React.FC = () => {
           )}
         </MapContainer>
       </div>
-      <button
-        onClick={handleSubmit}
-        className="absolute bottom-4 left-1/2 transform z-50 -translate-x-1/2 bg-blue-500 rounded-full shadow-lg p-4 text-white hover:bg-blue-600"
-      >
-        Guess
-      </button>
+
+      {!gameState?.isGameComplete && (
+        <button
+          onClick={handleSubmit}
+          className="absolute bottom-4 left-1/2 transform z-50 -translate-x-1/2 bg-blue-500 rounded-full shadow-lg p-4 text-white hover:bg-blue-600"
+        >
+          Guess
+        </button>
+      )}
+
+      {gameState?.isGameComplete && guess && (
+        <GameResults
+          guess={guess}
+          realCoordinates={gameState.realCoordinates}
+          distance={gameState.distance}
+          score={gameState.score}
+        />
+      )}
     </div>
   );
 };
