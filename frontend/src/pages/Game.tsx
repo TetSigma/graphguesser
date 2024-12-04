@@ -8,7 +8,8 @@ const Game: React.FC = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [loading, setLoading] = useState(true); 
   const { imageId } = useGameData();
-
+  const mapillaryToken = import.meta.env.MAPILLARY_TOKEN;
+  
   useEffect(() => {
     if (imageId && containerRef.current) {
       const container = containerRef.current;
@@ -16,7 +17,7 @@ const Game: React.FC = () => {
       container.style.height = "100vh";
 
       const options: ViewerOptions = {
-        accessToken: "MLY|8378375865606327|b5a74a1ee921350410c2af79a01e454d",
+        accessToken: mapillaryToken,
         container: container,
         imageId: imageId,
       };
