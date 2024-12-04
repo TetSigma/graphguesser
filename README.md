@@ -25,7 +25,7 @@ MAPILLARY_ACCESS_TOKEN=<your_mapillary_access_token>
 
 ### Set up on localhost
 
-```
+```bash
 // cloning the repo
 git clone https://github.com/TetSigma/graphguesser.git
 
