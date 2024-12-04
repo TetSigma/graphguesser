@@ -46,7 +46,7 @@ After this, it sends the bounding box coordinates to graph.mapillary.com, and us
 
 Script tries to generate bounding box 3 times, if nothing is found it breaks
 
-```
+```js
 // Get a random location from Mapillary based on a random bounding box
 const getRandomLocation = async (): Promise<Location | null> => {
   // Generate a smaller, random bounding box
