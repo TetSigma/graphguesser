@@ -33,7 +33,7 @@ cd frontend
 npm i
 npm run dev
 
-//This should be done in separate terminal
+// This should be done in separate terminal
 cd backend
 npm i
 npm run dev
