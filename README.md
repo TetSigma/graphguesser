@@ -12,13 +12,15 @@ Just like in geoguesser, user gets shown random streetview and has to guess wher
 
 ### .env on frontend 
 ```
-@SDAKD:S = ASD;l;
+VITE_BACKEND_URL=http://localhost:5000
 ```
 ### .env on backend
 Mapillary API token can be obtained on [their website](https://www.mapillary.com/developer/api-documentation)
 
 ```
-sa;ldkasd = sadad
+SUPABASE_URL=<your_supabase_url>
+SUPABASE_KEY=<your_supabase_key>
+MAPILLARY_ACCESS_TOKEN=<your_mapillary_access_token>
 ```
 
 ### Set up on localhost
