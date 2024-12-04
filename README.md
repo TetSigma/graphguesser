@@ -8,20 +8,20 @@ Graphguesser is a geoguesser clone that works on [Mapillary](https://www.mapilla
 
 Just like in geoguesser, user gets shown random streetview and has to guess where this streetview is located on the map
 
-# Get Started 
+## Get Started 
 
-## .env on frontend 
+### .env on frontend 
 ```
 @SDAKD:S = ASD;l;
 ```
-## .env on backend
+### .env on backend
 Mapillary API token can be obtained on [their website](https://www.mapillary.com/developer/api-documentation)
 
 ```
 sa;ldkasd = sadad
 ```
 
-## Set up on localhost
+### Set up on localhost
 
 ```
 // cloning the repo
