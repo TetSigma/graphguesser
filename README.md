@@ -1,5 +1,8 @@
 # Geoguesser clone game
-![Screenshot_1](https://github.com/user-attachments/assets/0a001d9d-7360-4a1f-9d3a-c06347513e7e)
+
+https://github.com/user-attachments/assets/01117cd8-3144-45a4-9ec8-f79a1b2c0892
+
+
 
 
 > Tech Stack: React Express Supabase THREE Tailwind
