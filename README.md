@@ -16,7 +16,7 @@ Just like in geoguesser, user gets shown random streetview and has to guess wher
 ### .env on frontend 
 ```
 VITE_BACKEND_URL=http://localhost:5000
-MAPILLARY_TOKEN=<your_mapillary_token>
+VITE_MAPILLARY_TOKEN=<your_mapillary_token>
 ```
 ### .env on backend
 Mapillary API token can be obtained on [their website](https://www.mapillary.com/developer/api-documentation)
