@@ -39,12 +39,12 @@ npm run dev
 
 ## How the random location logic works?
 
-Mapillary API doesnt support random locations by default, but it supports something called Bounding Box
-Graphguesser generates random coordinates, and after that generates bounding box around it 
+Mapillary API doesnt support random locations by default, but it supports something called Bounding Box  
+Graphguesser generates random coordinates, and after that generates bounding box around it  
 
-After this, it sends the bounding box coordinates to graph.mapillary.com, and usually Mapillary API returns imageId which can then be used to generate streetview
+After this, it sends the bounding box coordinates to graph.mapillary.com, and usually Mapillary API returns imageId which can then be used to generate streetview  
 
-Script tries to generate bounding box 3 times, if nothing is found it breaks
+Script tries to generate bounding box 3 times, if nothing is found it breaks  
 
 ```js
 // Get a random location from Mapillary based on a random bounding box
